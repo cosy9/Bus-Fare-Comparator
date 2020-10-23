@@ -1,0 +1,634 @@
+<Activity mc:Ignorable="sap sap2010" x:Class="Redbus" xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:mva="clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation" xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation" xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:sd="clr-namespace:System.Data;assembly=System.Data" xmlns:ui="http://schemas.uipath.com/workflow/activities" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="DateOfMonth" Type="InArgument(x:String)" />
+    <x:Property Name="from" Type="InArgument(x:String)" />
+    <x:Property Name="destination" Type="InArgument(x:String)" />
+    <x:Property Name="TravelName" Type="OutArgument(x:String)" />
+    <x:Property Name="Price" Type="OutArgument(x:String)" />
+    <x:Property Name="RedbusFinalURL" Type="OutArgument(x:String)" />
+    <x:Property Name="DesiredMonth" Type="InArgument(x:String)" />
+    <x:Property Name="DesiredYear" Type="InArgument(x:String)" />
+    <x:Property Name="DesiredTiming" Type="InArgument(x:String)" />
+    <x:Property Name="Redbus_source" Type="OutArgument(x:String)" />
+  </x:Members>
+  <mva:VisualBasic.Settings>
+    <x:Null />
+  </mva:VisualBasic.Settings>
+  <sap:VirtualizedContainerService.HintSize>765,4812</sap:VirtualizedContainerService.HintSize>
+  <sap2010:WorkflowViewState.IdRef>Redbus_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <scg:List x:TypeArguments="x:String" Capacity="24">
+      <x:String>System.Activities</x:String>
+      <x:String>System.Activities.Statements</x:String>
+      <x:String>System.Activities.Expressions</x:String>
+      <x:String>System.Activities.Validation</x:String>
+      <x:String>System.Activities.XamlIntegration</x:String>
+      <x:String>Microsoft.VisualBasic</x:String>
+      <x:String>Microsoft.VisualBasic.Activities</x:String>
+      <x:String>System</x:String>
+      <x:String>System.Collections</x:String>
+      <x:String>System.Collections.Generic</x:String>
+      <x:String>System.Data</x:String>
+      <x:String>System.Diagnostics</x:String>
+      <x:String>System.Drawing</x:String>
+      <x:String>System.IO</x:String>
+      <x:String>System.Linq</x:String>
+      <x:String>System.Net.Mail</x:String>
+      <x:String>System.Xml</x:String>
+      <x:String>System.Xml.Linq</x:String>
+      <x:String>UiPath.Core</x:String>
+      <x:String>UiPath.Core.Activities</x:String>
+      <x:String>System.Windows.Markup</x:String>
+      <x:String>Microsoft.VisualBasic.CompilerServices</x:String>
+      <x:String>UiPath.Excel</x:String>
+      <x:String>System.Xml.Serialization</x:String>
+    </scg:List>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <scg:List x:TypeArguments="AssemblyReference" Capacity="22">
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System.Data</AssemblyReference>
+      <AssemblyReference>System.Data.DataSetExtensions</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Drawing</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.Xml</AssemblyReference>
+      <AssemblyReference>System.Xml.Linq</AssemblyReference>
+      <AssemblyReference>PresentationFramework</AssemblyReference>
+      <AssemblyReference>WindowsBase</AssemblyReference>
+      <AssemblyReference>PresentationCore</AssemblyReference>
+      <AssemblyReference>System.Xaml</AssemblyReference>
+      <AssemblyReference>UiPath.System.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.UiAutomation.Activities</AssemblyReference>
+      <AssemblyReference>UiPath.Excel.Activities</AssemblyReference>
+      <AssemblyReference>System.ValueTuple</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>UiPath.Excel</AssemblyReference>
+      <AssemblyReference>UiPath.Mail</AssemblyReference>
+      <AssemblyReference>UiPath.CV</AssemblyReference>
+    </scg:List>
+  </TextExpression.ReferencesForImplementation>
+  <Sequence DisplayName="Redbus" sap:VirtualizedContainerService.HintSize="775,4607" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <Sequence.Variables>
+      <Variable x:TypeArguments="x:String" Default="https://www.redbus.in/" Name="redbusURL" />
+      <Variable x:TypeArguments="x:String" Name="dateSelector" />
+      <Variable x:TypeArguments="x:String" Name="CurrentMonthAndYear" />
+      <Variable x:TypeArguments="x:String" Name="AvailableMonthAndYear" />
+      <Variable x:TypeArguments="x:Boolean" Name="ViewBuses" />
+      <Variable x:TypeArguments="sd:DataTable" Default="[New System.Data.DataTable]" Name="ExtractDataTable" />
+      <Variable x:TypeArguments="ui:Browser" Name="Browser" />
+    </Sequence.Variables>
+    <sap:WorkflowViewStateService.ViewState>
+      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+      </scg:Dictionary>
+    </sap:WorkflowViewStateService.ViewState>
+    <TryCatch DisplayName="Try Catch" sap:VirtualizedContainerService.HintSize="733,4515" sap2010:WorkflowViewState.IdRef="TryCatch_1">
+      <TryCatch.Try>
+        <ui:OpenBrowser CommunicationMethod="{x:Null}" Hidden="{x:Null}" NewSession="{x:Null}" Private="{x:Null}" BrowserType="Chrome" DisplayName="Open Browser" sap:VirtualizedContainerService.HintSize="694,4287" sap2010:WorkflowViewState.IdRef="OpenBrowser_1" UiBrowser="[Browser]" Url="[redbusURL]">
+          <ui:OpenBrowser.Body>
+            <ActivityAction x:TypeArguments="x:Object">
+              <ActivityAction.Argument>
+                <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+              </ActivityAction.Argument>
+              <Sequence sap:VirtualizedContainerService.HintSize="660,4186" sap2010:WorkflowViewState.IdRef="Sequence_12">
+                <sap:WorkflowViewStateService.ViewState>
+                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                  </scg:Dictionary>
+                </sap:WorkflowViewStateService.ViewState>
+                <Sequence DisplayName="Do" sap:VirtualizedContainerService.HintSize="618,4032" sap2010:WorkflowViewState.IdRef="Sequence_2">
+                  <Sequence.Variables>
+                    <Variable x:TypeArguments="x:Boolean" Name="RedbusLoaded" />
+                    <Variable x:TypeArguments="x:String" Name="DesiredMonthAndYear" />
+                  </Sequence.Variables>
+                  <sap:WorkflowViewStateService.ViewState>
+                    <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                      <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                      <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                    </scg:Dictionary>
+                  </sap:WorkflowViewStateService.ViewState>
+                  <ui:UiElementExists DisplayName="Element Exists 'LABEL'" Exists="[RedbusLoaded]" sap:VirtualizedContainerService.HintSize="576,106" sap2010:WorkflowViewState.IdRef="UiElementExists_2">
+                    <ui:UiElementExists.Target>
+                      <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="f2e10d67-cbae-403a-9b78-6fb39005e7ba" InformativeScreenshot="d904437469fff2db0b06e48f4cffd66e" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl aaname='FROM' tag='LABEL' parentid='search' /&gt;">
+                        <ui:Target.TimeoutMS>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:Target.TimeoutMS>
+                        <ui:Target.WaitForReady>
+                          <InArgument x:TypeArguments="ui:WaitForReady" />
+                        </ui:Target.WaitForReady>
+                      </ui:Target>
+                    </ui:UiElementExists.Target>
+                  </ui:UiElementExists>
+                  <If Condition="[RedbusLoaded]" sap:VirtualizedContainerService.HintSize="576,207" sap2010:WorkflowViewState.IdRef="If_5">
+                    <If.Else>
+                      <Throw Exception="[new Exception(&quot;Redbus page didn't load properly&quot;)]" sap:VirtualizedContainerService.HintSize="200,22" sap2010:WorkflowViewState.IdRef="Throw_1" />
+                    </If.Else>
+                  </If>
+                  <Assign sap:VirtualizedContainerService.HintSize="576,60" sap2010:WorkflowViewState.IdRef="Assign_7">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[DesiredMonthAndYear]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">[DesiredMonth.Substring(0,3).Trim + " " + DesiredYear]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <ui:TypeInto AlterIfDisabled="{x:Null}" DelayBefore="{x:Null}" DelayBetweenKeys="{x:Null}" SendWindowMessages="{x:Null}" SimulateType="{x:Null}" Activate="True" ClickBeforeTyping="True" DelayMS="1000" DisplayName="Type Into 'INPUT  src'" EmptyField="True" sap:VirtualizedContainerService.HintSize="576,134" sap2010:WorkflowViewState.IdRef="TypeInto_1" Text="[from]">
+                    <ui:TypeInto.Target>
+                      <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="16e1cacd-c75a-497f-8719-f64327600569" InformativeScreenshot="755cdc73974d90e218c2acc7b34cf2fb" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl id='src' tag='INPUT' /&gt;">
+                        <ui:Target.TimeoutMS>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:Target.TimeoutMS>
+                        <ui:Target.WaitForReady>
+                          <InArgument x:TypeArguments="ui:WaitForReady" />
+                        </ui:Target.WaitForReady>
+                      </ui:Target>
+                    </ui:TypeInto.Target>
+                  </ui:TypeInto>
+                  <ui:TypeInto AlterIfDisabled="{x:Null}" ClickBeforeTyping="{x:Null}" DelayBefore="{x:Null}" DelayBetweenKeys="{x:Null}" DelayMS="{x:Null}" EmptyField="{x:Null}" SendWindowMessages="{x:Null}" SimulateType="{x:Null}" Activate="True" DisplayName="Type Into" sap:VirtualizedContainerService.HintSize="576,96" sap2010:WorkflowViewState.IdRef="TypeInto_3" Text="%[k(enter)][k(tab)]">
+                    <ui:TypeInto.Target>
+                      <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="998ffd6e-7750-4b69-9674-e7b282bb2045" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl id='src' tag='INPUT' /&gt;">
+                        <ui:Target.TimeoutMS>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:Target.TimeoutMS>
+                        <ui:Target.WaitForReady>
+                          <InArgument x:TypeArguments="ui:WaitForReady" />
+                        </ui:Target.WaitForReady>
+                      </ui:Target>
+                    </ui:TypeInto.Target>
+                  </ui:TypeInto>
+                  <ui:TypeInto AlterIfDisabled="{x:Null}" DelayBefore="{x:Null}" DelayBetweenKeys="{x:Null}" SendWindowMessages="{x:Null}" SimulateType="{x:Null}" Activate="True" ClickBeforeTyping="True" DelayMS="1000" DisplayName="Type Into 'INPUT  dest'" EmptyField="True" sap:VirtualizedContainerService.HintSize="576,134" sap2010:WorkflowViewState.IdRef="TypeInto_2" Text="[destination]">
+                    <ui:TypeInto.Target>
+                      <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="85e15e58-f54e-405d-b2fb-266f673ed1e2" InformativeScreenshot="4f9fdef8f7ebe8f78dcb25ca26666351" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl id='dest' tag='INPUT' aaname='TO' omit:parentclass='fl search-box' /&gt;">
+                        <ui:Target.TimeoutMS>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:Target.TimeoutMS>
+                        <ui:Target.WaitForReady>
+                          <InArgument x:TypeArguments="ui:WaitForReady" />
+                        </ui:Target.WaitForReady>
+                      </ui:Target>
+                    </ui:TypeInto.Target>
+                  </ui:TypeInto>
+                  <ui:TypeInto AlterIfDisabled="{x:Null}" ClickBeforeTyping="{x:Null}" DelayBefore="{x:Null}" DelayBetweenKeys="{x:Null}" DelayMS="{x:Null}" EmptyField="{x:Null}" SendWindowMessages="{x:Null}" SimulateType="{x:Null}" Activate="True" DisplayName="Type Into" sap:VirtualizedContainerService.HintSize="576,96" sap2010:WorkflowViewState.IdRef="TypeInto_4" Text="%[k(enter)][k(tab)]">
+                    <ui:TypeInto.Target>
+                      <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="4f7b4bc3-2749-497e-be50-bbfc8bdaba05" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl id='dest' tag='INPUT' aaname='TO' omit:parentclass='fl search-box' /&gt;">
+                        <ui:Target.TimeoutMS>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:Target.TimeoutMS>
+                        <ui:Target.WaitForReady>
+                          <InArgument x:TypeArguments="ui:WaitForReady" />
+                        </ui:Target.WaitForReady>
+                      </ui:Target>
+                    </ui:TypeInto.Target>
+                  </ui:TypeInto>
+                  <ui:InterruptibleDoWhile DisplayName="Do press prev arrow While available month not equal to current month" sap:VirtualizedContainerService.HintSize="576,51" sap2010:WorkflowViewState.IdRef="InterruptibleDoWhile_2">
+                    <ui:InterruptibleDoWhile.Body>
+                      <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="526,613" sap2010:WorkflowViewState.IdRef="Sequence_5">
+                        <sap:WorkflowViewStateService.ViewState>
+                          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                          </scg:Dictionary>
+                        </sap:WorkflowViewStateService.ViewState>
+                        <ui:GetValue ContinueOnError="{x:Null}" DisplayName="Get Text" sap:VirtualizedContainerService.HintSize="484,68" sap2010:WorkflowViewState.IdRef="GetValue_2">
+                          <ui:GetValue.Target>
+                            <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="ed734458-6388-4741-a32d-e5fb74376e87" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl tag='TABLE' /&gt;&lt;webctrl isleaf='1' tableRow='1' tag='TD' /&gt;">
+                              <ui:Target.TimeoutMS>
+                                <InArgument x:TypeArguments="x:Int32" />
+                              </ui:Target.TimeoutMS>
+                              <ui:Target.WaitForReady>
+                                <InArgument x:TypeArguments="ui:WaitForReady" />
+                              </ui:Target.WaitForReady>
+                            </ui:Target>
+                          </ui:GetValue.Target>
+                          <ui:GetValue.Value>
+                            <OutArgument x:TypeArguments="x:String">[AvailableMonthAndYear]</OutArgument>
+                          </ui:GetValue.Value>
+                        </ui:GetValue>
+                        <Assign sap:VirtualizedContainerService.HintSize="484,60" sap2010:WorkflowViewState.IdRef="Assign_3">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="x:String">[AvailableMonthAndYear]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="x:String">[AvailableMonthAndYear.Trim]</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                        <Assign sap:VirtualizedContainerService.HintSize="484,60" sap2010:WorkflowViewState.IdRef="Assign_4">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="x:String">[CurrentMonthAndYear]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="x:String">[now.ToString("MMM yyyy").Trim]</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                        <If Condition="[AvailableMonthAndYear &lt;&gt; CurrentMonthAndYear]" sap:VirtualizedContainerService.HintSize="484,253" sap2010:WorkflowViewState.IdRef="If_2">
+                          <sap:WorkflowViewStateService.ViewState>
+                            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                              <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                            </scg:Dictionary>
+                          </sap:WorkflowViewStateService.ViewState>
+                          <If.Then>
+                            <ui:Click AlterIfDisabled="{x:Null}" DelayBefore="{x:Null}" DelayMS="{x:Null}" SendWindowMessages="{x:Null}" SimulateClick="{x:Null}" ClickType="CLICK_SINGLE" DisplayName="Click ' prev month BUTTON'" sap:VirtualizedContainerService.HintSize="334,106" sap2010:WorkflowViewState.IdRef="Click_3" KeyModifiers="None" MouseButton="BTN_LEFT">
+                              <ui:Click.CursorPosition>
+                                <ui:CursorPosition Position="Center">
+                                  <ui:CursorPosition.OffsetX>
+                                    <InArgument x:TypeArguments="x:Int32" />
+                                  </ui:CursorPosition.OffsetX>
+                                  <ui:CursorPosition.OffsetY>
+                                    <InArgument x:TypeArguments="x:Int32" />
+                                  </ui:CursorPosition.OffsetY>
+                                </ui:CursorPosition>
+                              </ui:Click.CursorPosition>
+                              <ui:Click.Target>
+                                <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="04b05808-6ee9-4bec-b2ab-4ff41a71b650" InformativeScreenshot="d61d92121ee9d2e5e45fd7e03df7238e" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl aaname='&amp;lt;' parentid='rb-calendar_onward_cal' tag='BUTTON' /&gt;">
+                                  <ui:Target.TimeoutMS>
+                                    <InArgument x:TypeArguments="x:Int32" />
+                                  </ui:Target.TimeoutMS>
+                                  <ui:Target.WaitForReady>
+                                    <InArgument x:TypeArguments="ui:WaitForReady" />
+                                  </ui:Target.WaitForReady>
+                                </ui:Target>
+                              </ui:Click.Target>
+                            </ui:Click>
+                          </If.Then>
+                        </If>
+                      </Sequence>
+                    </ui:InterruptibleDoWhile.Body>
+                    <ui:InterruptibleDoWhile.Condition>
+                      <mva:VisualBasicValue x:TypeArguments="x:Boolean" ExpressionText="AvailableMonthAndYear &lt;&gt; CurrentMonthAndYear" sap2010:WorkflowViewState.IdRef="VisualBasicValue`1_2" />
+                    </ui:InterruptibleDoWhile.Condition>
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                        <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                  </ui:InterruptibleDoWhile>
+                  <ui:InterruptibleDoWhile DisplayName="Do Search for month While available month is not equal to desired month" sap:VirtualizedContainerService.HintSize="576,51" sap2010:WorkflowViewState.IdRef="InterruptibleDoWhile_1">
+                    <ui:InterruptibleDoWhile.Body>
+                      <Sequence sap:VirtualizedContainerService.HintSize="563,683" sap2010:WorkflowViewState.IdRef="Sequence_3">
+                        <sap:WorkflowViewStateService.ViewState>
+                          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                          </scg:Dictionary>
+                        </sap:WorkflowViewStateService.ViewState>
+                        <ui:GetValue ContinueOnError="{x:Null}" DisplayName="Get Text 'Month and Year'" sap:VirtualizedContainerService.HintSize="521,106" sap2010:WorkflowViewState.IdRef="GetValue_1">
+                          <ui:GetValue.Target>
+                            <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="aff10b60-0e68-4261-bba4-c8feac1d01f1" InformativeScreenshot="95026258b8eaa2c98789f69fc6162688" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl tag='TABLE' /&gt;&lt;webctrl isleaf='1' tableRow='1' tag='TD' /&gt;">
+                              <ui:Target.TimeoutMS>
+                                <InArgument x:TypeArguments="x:Int32" />
+                              </ui:Target.TimeoutMS>
+                              <ui:Target.WaitForReady>
+                                <InArgument x:TypeArguments="ui:WaitForReady" />
+                              </ui:Target.WaitForReady>
+                            </ui:Target>
+                          </ui:GetValue.Target>
+                          <ui:GetValue.Value>
+                            <OutArgument x:TypeArguments="x:String">[AvailableMonthAndYear]</OutArgument>
+                          </ui:GetValue.Value>
+                        </ui:GetValue>
+                        <Assign sap:VirtualizedContainerService.HintSize="521,60" sap2010:WorkflowViewState.IdRef="Assign_1">
+                          <Assign.To>
+                            <OutArgument x:TypeArguments="x:String">[AvailableMonthAndYear]</OutArgument>
+                          </Assign.To>
+                          <Assign.Value>
+                            <InArgument x:TypeArguments="x:String">[AvailableMonthAndYear.Trim]</InArgument>
+                          </Assign.Value>
+                        </Assign>
+                        <If Condition="[AvailableMonthAndYear &lt;&gt; DesiredMonthAndYear]" sap:VirtualizedContainerService.HintSize="521,345" sap2010:WorkflowViewState.IdRef="If_1">
+                          <If.Then>
+                            <Sequence sap:VirtualizedContainerService.HintSize="376,198" sap2010:WorkflowViewState.IdRef="Sequence_4">
+                              <sap:WorkflowViewStateService.ViewState>
+                                <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                                </scg:Dictionary>
+                              </sap:WorkflowViewStateService.ViewState>
+                              <ui:Click AlterIfDisabled="{x:Null}" DelayBefore="{x:Null}" DelayMS="{x:Null}" SendWindowMessages="{x:Null}" SimulateClick="{x:Null}" ClickType="CLICK_SINGLE" DisplayName="Click 'next month BUTTON'" sap:VirtualizedContainerService.HintSize="334,106" sap2010:WorkflowViewState.IdRef="Click_1" KeyModifiers="None" MouseButton="BTN_LEFT">
+                                <ui:Click.CursorPosition>
+                                  <ui:CursorPosition Position="Center">
+                                    <ui:CursorPosition.OffsetX>
+                                      <InArgument x:TypeArguments="x:Int32" />
+                                    </ui:CursorPosition.OffsetX>
+                                    <ui:CursorPosition.OffsetY>
+                                      <InArgument x:TypeArguments="x:Int32" />
+                                    </ui:CursorPosition.OffsetY>
+                                  </ui:CursorPosition>
+                                </ui:Click.CursorPosition>
+                                <ui:Click.Target>
+                                  <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="42edeabc-de79-418b-ba8c-cf93ebdc8fad" InformativeScreenshot="583454f72db1b93d5effbf6968ed8603" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl aaname='&amp;gt;' parentid='rb-calendar_onward_cal' tag='BUTTON' /&gt;">
+                                    <ui:Target.TimeoutMS>
+                                      <InArgument x:TypeArguments="x:Int32" />
+                                    </ui:Target.TimeoutMS>
+                                    <ui:Target.WaitForReady>
+                                      <InArgument x:TypeArguments="ui:WaitForReady" />
+                                    </ui:Target.WaitForReady>
+                                  </ui:Target>
+                                </ui:Click.Target>
+                              </ui:Click>
+                            </Sequence>
+                          </If.Then>
+                        </If>
+                      </Sequence>
+                    </ui:InterruptibleDoWhile.Body>
+                    <ui:InterruptibleDoWhile.Condition>
+                      <mva:VisualBasicValue x:TypeArguments="x:Boolean" ExpressionText="AvailableMonthAndYear &lt;&gt; DesiredMonthAndYear" sap2010:WorkflowViewState.IdRef="VisualBasicValue`1_1" />
+                    </ui:InterruptibleDoWhile.Condition>
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+                        <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                  </ui:InterruptibleDoWhile>
+                  <Assign sap:VirtualizedContainerService.HintSize="576,60" sap2010:WorkflowViewState.IdRef="Assign_2">
+                    <Assign.To>
+                      <OutArgument x:TypeArguments="x:String">[dateSelector]</OutArgument>
+                    </Assign.To>
+                    <Assign.Value>
+                      <InArgument x:TypeArguments="x:String">["&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl tag='TABLE' /&gt;&lt;webctrl isleaf='1' tag='TD' aaname='" + DateOfMonth + "' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;"]</InArgument>
+                    </Assign.Value>
+                  </Assign>
+                  <ui:Click AlterIfDisabled="{x:Null}" DelayBefore="{x:Null}" DelayMS="{x:Null}" SendWindowMessages="{x:Null}" SimulateClick="{x:Null}" ClickType="CLICK_SINGLE" DisplayName="Click 'Date'" sap:VirtualizedContainerService.HintSize="576,106" sap2010:WorkflowViewState.IdRef="Click_2" KeyModifiers="None" MouseButton="BTN_LEFT">
+                    <ui:Click.CursorPosition>
+                      <ui:CursorPosition Position="Center">
+                        <ui:CursorPosition.OffsetX>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:CursorPosition.OffsetX>
+                        <ui:CursorPosition.OffsetY>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:CursorPosition.OffsetY>
+                      </ui:CursorPosition>
+                    </ui:Click.CursorPosition>
+                    <ui:Click.Target>
+                      <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="e8f650ee-ce16-43f0-b149-7c890084f4df" InformativeScreenshot="92ad1ed1e2ddcad49aceda00102adb89" Selector="[dateSelector]">
+                        <ui:Target.TimeoutMS>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:Target.TimeoutMS>
+                        <ui:Target.WaitForReady>
+                          <InArgument x:TypeArguments="ui:WaitForReady" />
+                        </ui:Target.WaitForReady>
+                      </ui:Target>
+                    </ui:Click.Target>
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                        <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                  </ui:Click>
+                  <ui:Click AlterIfDisabled="{x:Null}" DelayBefore="{x:Null}" SendWindowMessages="{x:Null}" SimulateClick="{x:Null}" ClickType="CLICK_SINGLE" DelayMS="6000" DisplayName="Click &quot;Search Buses&quot;" sap:VirtualizedContainerService.HintSize="576,106" sap2010:WorkflowViewState.IdRef="Click_4" KeyModifiers="None" MouseButton="BTN_LEFT">
+                    <ui:Click.CursorPosition>
+                      <ui:CursorPosition Position="Center">
+                        <ui:CursorPosition.OffsetX>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:CursorPosition.OffsetX>
+                        <ui:CursorPosition.OffsetY>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:CursorPosition.OffsetY>
+                      </ui:CursorPosition>
+                    </ui:Click.CursorPosition>
+                    <ui:Click.Target>
+                      <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="54d6e102-b646-4137-a041-28d4ea25c280" InformativeScreenshot="ea446e5700cda6bca45bc22ba6f01514" Selector="&lt;html app='chrome.exe' title='Book Bus Travels, AC Volvo Bus, rPool &amp;amp; Bus Hire - redBus India' /&gt;&lt;webctrl id='search_btn' tag='BUTTON' /&gt;">
+                        <ui:Target.TimeoutMS>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:Target.TimeoutMS>
+                        <ui:Target.WaitForReady>
+                          <InArgument x:TypeArguments="ui:WaitForReady" />
+                        </ui:Target.WaitForReady>
+                      </ui:Target>
+                    </ui:Click.Target>
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                        <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                  </ui:Click>
+                  <ui:Click AlterIfDisabled="{x:Null}" DelayBefore="{x:Null}" DelayMS="{x:Null}" SendWindowMessages="{x:Null}" SimulateClick="{x:Null}" ClickType="CLICK_SINGLE" DisplayName="Click 'Fare'" sap:VirtualizedContainerService.HintSize="576,106" sap2010:WorkflowViewState.IdRef="Click_6" KeyModifiers="None" MouseButton="BTN_LEFT">
+                    <ui:Click.CursorPosition>
+                      <ui:CursorPosition Position="Center">
+                        <ui:CursorPosition.OffsetX>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:CursorPosition.OffsetX>
+                        <ui:CursorPosition.OffsetY>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:CursorPosition.OffsetY>
+                      </ui:CursorPosition>
+                    </ui:Click.CursorPosition>
+                    <ui:Click.Target>
+                      <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="76809daa-8641-4720-9e07-76a774c34866" InformativeScreenshot="1f543690e849cc86c4f767addfc32cf7" Selector="&lt;html app='chrome.exe' title='Search Bus Tickets' /&gt;&lt;webctrl aaname='Ratings' parentid='root' tag='A' /&gt;&lt;nav up='2' /&gt;&lt;webctrl aaname='Fare' parentid='root' tag='A' /&gt;">
+                        <ui:Target.TimeoutMS>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:Target.TimeoutMS>
+                        <ui:Target.WaitForReady>
+                          <InArgument x:TypeArguments="ui:WaitForReady" />
+                        </ui:Target.WaitForReady>
+                      </ui:Target>
+                    </ui:Click.Target>
+                  </ui:Click>
+                  <ui:GetAttribute ContinueOnError="{x:Null}" Attribute="url" DisplayName="Get Attribute 'SPAN'" sap:VirtualizedContainerService.HintSize="576,134" sap2010:WorkflowViewState.IdRef="GetAttribute_1">
+                    <ui:GetAttribute.Result>
+                      <OutArgument x:TypeArguments="x:String">[RedbusFinalURL]</OutArgument>
+                    </ui:GetAttribute.Result>
+                    <ui:GetAttribute.Target>
+                      <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="d5c6c71c-f39a-4ff9-bfd0-7a4fcd5c2482" InformativeScreenshot="70db26b4a7c1003b85b2c34419cae8ba" Selector="&lt;html app='chrome.exe' title='Search Bus Tickets' /&gt;&lt;webctrl aaname='SORT BY:' parentid='root' tag='SPAN' innertext='SORT BY:' /&gt;">
+                        <ui:Target.TimeoutMS>
+                          <InArgument x:TypeArguments="x:Int32" />
+                        </ui:Target.TimeoutMS>
+                        <ui:Target.WaitForReady>
+                          <InArgument x:TypeArguments="ui:WaitForReady" />
+                        </ui:Target.WaitForReady>
+                      </ui:Target>
+                    </ui:GetAttribute.Target>
+                  </ui:GetAttribute>
+                  <WriteLine DisplayName="Write Line" sap:VirtualizedContainerService.HintSize="576,61" sap2010:WorkflowViewState.IdRef="WriteLine_3" Text="[RedbusFinalURL]" />
+                  <Sequence DisplayName="Data Scraping Buses List" sap:VirtualizedContainerService.HintSize="576,436" sap2010:WorkflowViewState.IdRef="Sequence_9">
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                        <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                    <ui:BrowserScope Browser="{x:Null}" SearchScope="{x:Null}" TimeoutMS="{x:Null}" UiBrowser="{x:Null}" BrowserType="Chrome" DisplayName="Attach Browser 'SearchBus Page'" sap:VirtualizedContainerService.HintSize="434,344" sap2010:WorkflowViewState.IdRef="BrowserScope_2" InformativeScreenshot="36dbf44a903537384e2ac4804018ecab" Selector="&lt;html app='chrome.exe' title='Search Bus Tickets' /&gt;">
+                      <ui:BrowserScope.Body>
+                        <ActivityAction x:TypeArguments="x:Object">
+                          <ActivityAction.Argument>
+                            <DelegateInArgument x:TypeArguments="x:Object" Name="ContextTarget" />
+                          </ActivityAction.Argument>
+                          <Sequence DisplayName="Do Bus List page" sap:VirtualizedContainerService.HintSize="376,198" sap2010:WorkflowViewState.IdRef="Sequence_8">
+                            <sap:WorkflowViewStateService.ViewState>
+                              <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                                <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                              </scg:Dictionary>
+                            </sap:WorkflowViewStateService.ViewState>
+                            <ui:ExtractData DelayBetweenPagesMS="{x:Null}" NextLinkSelector="{x:Null}" ContinueOnError="True" DataTable="[ExtractDataTable]" DisplayName="Extract Structured Data 'Buses List'" ExtractMetadata="&lt;extract&gt;&lt;row exact='1'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;/row&gt;&lt;column exact='1' name='Travel Name' attr='text'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;webctrl tag='div' class='column-two p-right-10 w-30 fl' idx='1'/&gt;&lt;webctrl tag='div' class='travels lh-24 f-bold d-color' idx='1'/&gt;&lt;/column&gt;&lt;column exact='1' name='DepartureTime' attr='text'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;webctrl tag='div' class='column-three p-right-10 w-10 fl' idx='1'/&gt;&lt;webctrl tag='div' class='dp-time f-19 d-color f-bold' idx='1'/&gt;&lt;/column&gt;&lt;column exact='1' name='JourneyDuration' attr='text'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;webctrl tag='div' class='column-four p-right-10 w-10 fl' idx='1'/&gt;&lt;webctrl tag='div' class='dur l-color lh-24' idx='1'/&gt;&lt;/column&gt;&lt;column exact='1' name='SourceLocation' attr='text'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;webctrl tag='div' class='column-three p-right-10 w-10 fl' idx='1'/&gt;&lt;webctrl tag='div' class='dp-loc l-color w-wrap f-12 m-top-42' idx='1'/&gt;&lt;/column&gt;&lt;column exact='1' name='DestinationLocation' attr='text'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;webctrl tag='div' class='column-five p-right-10 w-10 fl' idx='1'/&gt;&lt;webctrl tag='div' class='bp-loc l-color w-wrap f-12 m-top-8' idx='1'/&gt;&lt;/column&gt;&lt;column exact='1' name='ArrivalTime' attr='text'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;webctrl tag='div' class='column-five p-right-10 w-10 fl' idx='1'/&gt;&lt;webctrl tag='div' class='bp-time f-19 d-color disp-Inline' idx='1'/&gt;&lt;/column&gt;&lt;column exact='1' name='Rating' attr='text'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;webctrl tag='div' class='column-six p-right-10 w-10 fl' idx='1'/&gt;&lt;webctrl tag='div' class='rating-sec lh-24' idx='1'/&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='span' idx='1'/&gt;&lt;/column&gt;&lt;column exact='1' name='Price' attr='text'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;webctrl tag='div' class='column-seven p-right-10 w-15 fl' idx='1'/&gt;&lt;webctrl tag='div' class='seat-fare ' idx='1'/&gt;&lt;webctrl tag='div' class='fare d-block' text='INR' idx='1'/&gt;&lt;webctrl tag='span' class='f-19 f-bold' idx='1'/&gt;&lt;/column&gt;&lt;column exact='1' name='SeatsAvailable' attr='text'&gt;&lt;webctrl tag='div'/&gt;&lt;webctrl tag='li' class='row-sec clearfix' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix bus-item-details' idx='1'/&gt;&lt;webctrl tag='div' class='clearfix row-one' idx='1'/&gt;&lt;webctrl tag='div' class='column-eight w-15 fl' idx='1'/&gt;&lt;webctrl tag='div' class='seat-left m-top-30' idx='1'/&gt;&lt;/column&gt;&lt;/extract&gt;" sap:VirtualizedContainerService.HintSize="334,106" sap2010:WorkflowViewState.IdRef="ExtractData_2" MaxNumberOfResults="0" SimulateClick="True">
+                              <ui:ExtractData.Target>
+                                <ui:Target ClippingRegion="{x:Null}" Element="{x:Null}" Id="061a1d8d-78b5-41e9-b367-09793d345722" InformativeScreenshot="35b5fcc454a62b6ed90e7bf005e22a79" Selector="&lt;webctrl css-selector='body&amp;gt;section&amp;gt;div&amp;gt;div&amp;gt;div&amp;gt;div&amp;gt;div&amp;gt;div&amp;gt;ul' parentid='root' tag='UL' /&gt;" WaitForReady="COMPLETE">
+                                  <ui:Target.TimeoutMS>
+                                    <InArgument x:TypeArguments="x:Int32" />
+                                  </ui:Target.TimeoutMS>
+                                </ui:Target>
+                              </ui:ExtractData.Target>
+                            </ui:ExtractData>
+                          </Sequence>
+                        </ActivityAction>
+                      </ui:BrowserScope.Body>
+                    </ui:BrowserScope>
+                  </Sequence>
+                  <ui:WriteRange AddHeaders="True" DataTable="[ExtractDataTable]" DisplayName="Write Range" sap:VirtualizedContainerService.HintSize="576,115" sap2010:WorkflowViewState.IdRef="WriteRange_1" SheetName="Sheet1" WorkbookPath="RedBusList.xlsx">
+                    <ui:WriteRange.StartingCell>
+                      <InArgument x:TypeArguments="x:String">
+                        <Literal x:TypeArguments="x:String" Value="" />
+                      </InArgument>
+                    </ui:WriteRange.StartingCell>
+                  </ui:WriteRange>
+                  <ui:ForEachRow CurrentIndex="{x:Null}" DataTable="[ExtractDataTable]" DisplayName="For Each Row in ExtractDataTable" sap:VirtualizedContainerService.HintSize="576,1201" sap2010:WorkflowViewState.IdRef="ForEachRow_1">
+                    <ui:ForEachRow.Body>
+                      <ActivityAction x:TypeArguments="sd:DataRow">
+                        <ActivityAction.Argument>
+                          <DelegateInArgument x:TypeArguments="sd:DataRow" Name="row" />
+                        </ActivityAction.Argument>
+                        <Sequence DisplayName="Body" sap:VirtualizedContainerService.HintSize="526,1054" sap2010:WorkflowViewState.IdRef="Sequence_10">
+                          <Sequence.Variables>
+                            <Variable x:TypeArguments="x:Int32" Name="AvailableTimingInMin" />
+                            <Variable x:TypeArguments="x:Int32" Name="DesiredDepartureFrom" />
+                            <Variable x:TypeArguments="x:Int32" Name="DesiredDepartureTo" />
+                          </Sequence.Variables>
+                          <sap:WorkflowViewStateService.ViewState>
+                            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                            </scg:Dictionary>
+                          </sap:WorkflowViewStateService.ViewState>
+                          <Assign sap:VirtualizedContainerService.HintSize="484,60" sap2010:WorkflowViewState.IdRef="Assign_10">
+                            <Assign.To>
+                              <OutArgument x:TypeArguments="x:Int32">[AvailableTimingInMin]</OutArgument>
+                            </Assign.To>
+                            <Assign.Value>
+                              <InArgument x:TypeArguments="x:Int32">[((Convert.ToInt32(row.Item("DepartureTime").ToString.Substring(0,2))) * 60) + Convert.ToInt32(row.Item("DepartureTime").ToString.Substring(3,2))]</InArgument>
+                            </Assign.Value>
+                          </Assign>
+                          <Assign sap:VirtualizedContainerService.HintSize="484,60" sap2010:WorkflowViewState.IdRef="Assign_11">
+                            <Assign.To>
+                              <OutArgument x:TypeArguments="x:Int32">[DesiredDepartureFrom]</OutArgument>
+                            </Assign.To>
+                            <Assign.Value>
+                              <InArgument x:TypeArguments="x:Int32">[(Convert.ToInt32(DesiredTiming.Substring(0,2))*60) + Convert.ToInt32(DesiredTiming.Substring(3,2))]</InArgument>
+                            </Assign.Value>
+                          </Assign>
+                          <Assign sap:VirtualizedContainerService.HintSize="484,60" sap2010:WorkflowViewState.IdRef="Assign_12">
+                            <Assign.To>
+                              <OutArgument x:TypeArguments="x:Int32">[DesiredDepartureTo]</OutArgument>
+                            </Assign.To>
+                            <Assign.Value>
+                              <InArgument x:TypeArguments="x:Int32">[(Convert.ToInt32(DesiredTiming.Substring(6,2))*60) + Convert.ToInt32(DesiredTiming.Substring(9,2))]</InArgument>
+                            </Assign.Value>
+                          </Assign>
+                          <If Condition="[row.Item(&quot;SeatsAvailable&quot;).ToString.Contains(&quot;Seats available&quot;) And (AvailableTimingInMin &gt;= DesiredDepartureFrom) And (AvailableTimingInMin &lt;= DesiredDepartureTo)]" sap:VirtualizedContainerService.HintSize="484,662" sap2010:WorkflowViewState.IdRef="If_4">
+                            <If.Then>
+                              <Sequence sap:VirtualizedContainerService.HintSize="304,515" sap2010:WorkflowViewState.IdRef="Sequence_11">
+                                <sap:WorkflowViewStateService.ViewState>
+                                  <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                                    <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                                  </scg:Dictionary>
+                                </sap:WorkflowViewStateService.ViewState>
+                                <Assign sap:VirtualizedContainerService.HintSize="262,60" sap2010:WorkflowViewState.IdRef="Assign_5">
+                                  <Assign.To>
+                                    <OutArgument x:TypeArguments="x:String">[TravelName]</OutArgument>
+                                  </Assign.To>
+                                  <Assign.Value>
+                                    <InArgument x:TypeArguments="x:String">[row.Item("Travel Name").ToString]</InArgument>
+                                  </Assign.Value>
+                                </Assign>
+                                <Assign sap:VirtualizedContainerService.HintSize="262,60" sap2010:WorkflowViewState.IdRef="Assign_6">
+                                  <Assign.To>
+                                    <OutArgument x:TypeArguments="x:String">[Price]</OutArgument>
+                                  </Assign.To>
+                                  <Assign.Value>
+                                    <InArgument x:TypeArguments="x:String">[row.Item("Price").ToString]</InArgument>
+                                  </Assign.Value>
+                                </Assign>
+                                <WriteLine DisplayName="Write Line" sap:VirtualizedContainerService.HintSize="262,61" sap2010:WorkflowViewState.IdRef="WriteLine_2" Text="[&quot;Source-Redbus,TravelName-&quot; + TravelName  + &quot;,Price-&quot; + Price + &quot;,DepartureTIme-&quot; + row.Item(&quot;DepartureTime&quot;).ToString]" />
+                                <Assign sap:VirtualizedContainerService.HintSize="262,60" sap2010:WorkflowViewState.IdRef="Assign_13">
+                                  <Assign.To>
+                                    <OutArgument x:TypeArguments="x:String">[Redbus_source]</OutArgument>
+                                  </Assign.To>
+                                  <Assign.Value>
+                                    <InArgument x:TypeArguments="x:String" xml:space="preserve">["Source-Redbus,TravelName-" + TravelName  + ",Price-" + Price + ",DepartureTIme-" + row.Item("DepartureTime").ToString]</InArgument>
+                                  </Assign.Value>
+                                </Assign>
+                                <ui:Break sap:VirtualizedContainerService.HintSize="262,22" sap2010:WorkflowViewState.IdRef="Break_1" />
+                              </Sequence>
+                            </If.Then>
+                          </If>
+                        </Sequence>
+                      </ActivityAction>
+                    </ui:ForEachRow.Body>
+                    <sap:WorkflowViewStateService.ViewState>
+                      <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                        <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                        <x:Boolean x:Key="IsPinned">False</x:Boolean>
+                      </scg:Dictionary>
+                    </sap:WorkflowViewStateService.ViewState>
+                  </ui:ForEachRow>
+                </Sequence>
+                <ui:CloseTab Browser="[Browser]" DisplayName="Close Tab" sap:VirtualizedContainerService.HintSize="618,22" sap2010:WorkflowViewState.IdRef="CloseTab_1" />
+              </Sequence>
+            </ActivityAction>
+          </ui:OpenBrowser.Body>
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+              <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+        </ui:OpenBrowser>
+      </TryCatch.Try>
+      <TryCatch.Catches>
+        <Catch x:TypeArguments="s:Exception" sap:VirtualizedContainerService.HintSize="699.333333333333,22" sap2010:WorkflowViewState.IdRef="Catch`1_1">
+          <sap:WorkflowViewStateService.ViewState>
+            <scg:Dictionary x:TypeArguments="x:String, x:Object">
+              <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+              <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            </scg:Dictionary>
+          </sap:WorkflowViewStateService.ViewState>
+          <ActivityAction x:TypeArguments="s:Exception">
+            <ActivityAction.Argument>
+              <DelegateInArgument x:TypeArguments="s:Exception" Name="exception" />
+            </ActivityAction.Argument>
+            <Sequence sap:VirtualizedContainerService.HintSize="376,390.666666666667" sap2010:WorkflowViewState.IdRef="Sequence_13">
+              <sap:WorkflowViewStateService.ViewState>
+                <scg:Dictionary x:TypeArguments="x:String, x:Object">
+                  <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+                </scg:Dictionary>
+              </sap:WorkflowViewStateService.ViewState>
+              <ui:LogMessage DisplayName="Log Message" sap:VirtualizedContainerService.HintSize="334,94.6666666666667" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Error" Message="[exception.Message]" />
+              <Assign sap:VirtualizedContainerService.HintSize="334,62" sap2010:WorkflowViewState.IdRef="Assign_8">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:String">[TravelName]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:String">
+                    <Literal x:TypeArguments="x:String" Value="" />
+                  </InArgument>
+                </Assign.Value>
+              </Assign>
+              <Assign sap:VirtualizedContainerService.HintSize="334,62" sap2010:WorkflowViewState.IdRef="Assign_9">
+                <Assign.To>
+                  <OutArgument x:TypeArguments="x:String">[Price]</OutArgument>
+                </Assign.To>
+                <Assign.Value>
+                  <InArgument x:TypeArguments="x:String">
+                    <Literal x:TypeArguments="x:String" Value="" />
+                  </InArgument>
+                </Assign.Value>
+              </Assign>
+            </Sequence>
+          </ActivityAction>
+        </Catch>
+      </TryCatch.Catches>
+    </TryCatch>
+  </Sequence>
+</Activity>
